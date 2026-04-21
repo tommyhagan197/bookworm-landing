@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BookWorm — Reading Refined</title>
+  <meta name="description" content="BookWorm is the reading app that makes free books feel like expensive ones. Beautiful typography, distraction-free reading, and a community built around books." />
+  <meta property="og:title" content="BookWorm — Reading Refined" />
+  <meta property="og:description" content="Free public-domain classics with a luxury reading experience. Install on iPhone." />
+  <meta property="og:image" content="https://bookworm-dpq.pages.dev/og.png" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:    #F5F0E8;
+      --bone:     #EDE8DF;
+      --parchment:#E4DFD5;
+      --faded:    #7A6E5E;
+      --espresso: #2C2416;
+      --walnut:   #6B5344;
+      --ember:    #E07C3A;
+      --kindling: #C0602A;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--espresso);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 60px;
+      background: rgba(245,240,232,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(107,83,68,0.1);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: 'Lora', serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--espresso);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--faded);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--espresso); }
+    .nav-links a.active { color: var(--ember); }
+
+    .nav-cta {
+      background: var(--ember);
+      color: #fff !important;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-weight: 600 !important;
+      transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--kindling) !important; color: #fff !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 60px;
+      padding: 100px 80px 80px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ember);
+      margin-bottom: 20px;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--ember);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .hero-headline {
+      font-family: 'Lora', serif;
+      font-size: clamp(42px, 5vw, 64px);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--espresso);
+      margin-bottom: 24px;
+    }
+
+    .hero-headline em {
+      font-style: italic;
+      color: var(--walnut);
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--faded);
+      line-height: 1.65;
+      margin-bottom: 40px;
+      max-width: 440px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--ember);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(224,124,58,0.3);
+    }
+
+    .btn-primary:hover {
+      background: var(--kindling);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(224,124,58,0.4);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--espresso);
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid rgba(107,83,68,0.25);
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bone);
+      border-color: var(--walnut);
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 12px;
+      color: var(--faded);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+    /* ── PHONE MOCKUP ── */
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .phone {
+      width: 280px;
+      background: var(--espresso);
+      border-radius: 44px;
+      padding: 14px;
+      box-shadow:
+        0 40px 80px rgba(44,36,22,0.3),
+        0 0 0 1px rgba(255,255,255,0.08) inset;
+      position: relative;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .phone-notch {
+      width: 90px;
+      height: 28px;
+      background: var(--espresso);
+      border-radius: 0 0 18px 18px;
+      margin: 0 auto 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .phone-screen {
+      background: #F5F0E8;
+      border-radius: 32px;
+      overflow: hidden;
+      min-height: 520px;
+      padding: 20px 18px;
+    }
+
+    .phone-chapter {
+      font-family: 'Lora', serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      color: var(--espresso);
+      margin-bottom: 4px;
+    }
+
+    .phone-chapter-sub {
+      font-size: 10px;
+      text-align: center;
+      color: var(--faded);
+      font-style: italic;
+      margin-bottom: 18px;
+      font-family: 'Lora', serif;
+    }
+
+    .phone-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--parchment);
+      margin: 0 auto 18px;
+    }
+
+    .phone-text p {
+      font-family: 'Lora', serif;
+      font-size: 11.5px;
+      line-height: 1.75;
+      color: var(--espresso);
+      margin-bottom: 12px;
+      text-align: justify;
+    }
+
+    .phone-text p.indent { text-indent: 1.2em; }
+
+    /* floating glow behind phone */
+    .phone-glow {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(224,124,58,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      background: var(--bone);
+      padding: 100px 80px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ember);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Lora', serif;
+      font-size: clamp(30px, 4vw, 44px);
+      font-weight: 700;
+      text-align: center;
+      color: var(--espresso);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .section-sub {
+      font-size: 17px;
+      color: var(--faded);
+      text-align: center;
+      max-width: 520px;
+      margin: 0 auto 64px;
+      line-height: 1.65;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: var(--paper);
+      border-radius: 16px;
+      padding: 32px 28px;
+      border: 1px solid rgba(107,83,68,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(44,36,22,0.08);
+    }
+
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .feature-title {
+      font-family: 'Lora', serif;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--espresso);
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: var(--faded);
+      line-height: 1.65;
+    }
+
+    /* ── CLASSICS ── */
+    .classics {
+      padding: 100px 80px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .books-strip {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+      margin-top: 48px;
+    }
+
+    .books-strip::-webkit-scrollbar { display: none; }
+
+    .book-card {
+      flex-shrink: 0;
+      width: 140px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(44,36,22,0.12);
+      transition: transform 0.2s;
+    }
+
+    .book-card:hover { transform: translateY(-4px) rotate(-1deg); }
+
+    .book-cover {
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 14px;
+    }
+
+    .book-title {
+      font-family: 'Lora', serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.95);
+      line-height: 1.3;
+      margin-bottom: 3px;
+    }
+
+    .book-author {
+      font-size: 10px;
+      color: rgba(255,255,255,0.65);
+    }
+
+    /* ── INSTALL ── */
+    .install {
+      background: var(--espresso);
+      padding: 100px 80px;
+      text-align: center;
+    }
+
+    .install .section-label { color: rgba(224,124,58,0.9); }
+
+    .install .section-title { color: #F5F0E8; }
+
+    .install .section-sub { color: rgba(245,240,232,0.55); }
+
+    .install-steps {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin: 48px auto 56px;
+      max-width: 680px;
+      position: relative;
+    }
+
+    .install-steps::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: calc(16.66% + 20px);
+      right: calc(16.66% + 20px);
+      height: 1px;
+      background: rgba(245,240,232,0.1);
+    }
+
+    .install-step {
+      flex: 1;
+      text-align: center;
+      padding: 0 16px;
+    }
+
+    .step-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(224,124,58,0.15);
+      border: 1px solid rgba(224,124,58,0.3);
+      color: var(--ember);
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+    }
+
+    .step-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(245,240,232,0.9);
+      margin-bottom: 6px;
+    }
+
+    .step-desc {
+      font-size: 12px;
+      color: rgba(245,240,232,0.4);
+      line-height: 1.5;
+    }
+
+    .install-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--ember);
+      color: #fff;
+      padding: 16px 36px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 24px rgba(224,124,58,0.35);
+    }
+
+    .install-cta:hover {
+      background: var(--kindling);
+      transform: translateY(-2px);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--espresso);
+      border-top: 1px solid rgba(245,240,232,0.06);
+      padding: 40px 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-logo {
+      font-family: 'Lora', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(245,240,232,0.8);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: rgba(245,240,232,0.3);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      color: rgba(245,240,232,0.4);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: rgba(245,240,232,0.8); }
+
+    /* ── ANIMATIONS ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      animation: fadeUp 0.7s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.35s; }
+    .delay-4 { animation-delay: 0.5s; }
+    .delay-5 { animation-delay: 0.65s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 100px 24px 60px;
+        text-align: center;
+        gap: 48px;
+      }
+
+      .hero-sub { margin: 0 auto 40px; }
+      .hero-actions { justify-content: center; }
+      .hero-meta { justify-content: center; }
+      .hero-visual { order: -1; }
+      .phone { width: 220px; }
+      .phone-screen { min-height: 400px; }
+
+      .features { padding: 60px 24px; }
+      .classics { padding: 60px 24px; }
+      .install { padding: 60px 24px; }
+      footer { padding: 32px 24px; flex-direction: column; gap: 16px; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">
+      <span>📖</span> BookWorm
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#classics">Free Classics</a></li>
+      <li><a href="https://bookworm-dpq.pages.dev" target="_blank">Open App</a></li>
+      <li><a href="https://bookworm-dpq.pages.dev" class="nav-cta" target="_blank">Install →</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow fade-up">Reading Refined</div>
+      <h1 class="hero-headline fade-up delay-1">
+        Free books.<br><em>First-edition</em><br>feel.
+      </h1>
+      <p class="hero-sub fade-up delay-2">
+        BookWorm makes public-domain classics feel like expensive hardbacks — warm typography, distraction-free pages, and a reading community that cares about books.
+      </p>
+      <div class="hero-actions fade-up delay-3">
+        <a href="https://bookworm-dpq.pages.dev" class="btn-primary" target="_blank">
+          📱 Install on iPhone
+        </a>
+        <a href="#classics" class="btn-secondary">
+          Browse free classics
+        </a>
+      </div>
+      <div class="hero-meta fade-up delay-4">
+        <span>✦ Progressive Web App</span>
+        <span>✦ iOS 16+</span>
+        <span>✦ Offline-first</span>
+      </div>
+    </div>
+
+    <div class="hero-visual fade-up delay-3">
+      <div class="phone-glow"></div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-chapter">Chapter 14</div>
+          <div class="phone-chapter-sub">In which we meet the librarian</div>
+          <div class="phone-divider"></div>
+          <div class="phone-text">
+            <p>I finished the last page at 2:14 in the morning, and sat for a while in the dark listening to the house sleep.</p>
+            <p class="indent">Somewhere downstairs a tap dripped. I thought about the characters the way you think about people you've seen leave on a train — certain they will arrive somewhere, uncertain where.</p>
+            <p class="indent">The windows were blue. It would be light soon. I put the phone down on the pillow beside me and let my eyes close with the book still glowing faintly, the way a candle does when you blow it out in another room and the smell reaches you later.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-label">Why BookWorm</div>
+    <h2 class="section-title">Built for the act of reading.</h2>
+    <p class="section-sub">Every decision optimised for the reading experience. Nothing else.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🌿</span>
+        <div class="feature-title">Warm sepia typography</div>
+        <p class="feature-desc">Lora serif, screen-height pages, and a paper-warm palette tuned to reduce eye strain during long reading sessions.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📚</span>
+        <div class="feature-title">Free classics library</div>
+        <p class="feature-desc">Thousands of public-domain titles from Project Gutenberg and Standard Ebooks — beautifully presented, always free.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🌙</span>
+        <div class="feature-title">Three reading themes</div>
+        <p class="feature-desc">Sepia, Light, and Dark modes that share one warm accent and swap every other role. Reading at any hour.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📖</span>
+        <div class="feature-title">Your own EPUBs</div>
+        <p class="feature-desc">Import any EPUB from your Files app. Stored on your device — private, offline, permanent.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">👥</span>
+        <div class="feature-title">Book clubs</div>
+        <p class="feature-desc">Read together. Share passages, join clubs, see what your friends are finishing. Review-first, never engagement-first.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">✍️</span>
+        <div class="feature-title">Original writing</div>
+        <p class="feature-desc">Publish your own short stories and essays. Free by default. A quality surface for serious writing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FREE CLASSICS -->
+  <section class="classics" id="classics">
+    <div class="section-label">Free Classics</div>
+    <h2 class="section-title">The canon. Zero cost.</h2>
+    <p class="section-sub">Public domain doesn't have to feel like it. Every classic in BookWorm gets the same premium treatment as a paid book.</p>
+
+    <div class="books-strip">
+      <div class="book-card">
+        <div class="book-cover" style="background: linear-gradient(160deg, #8B6914, #5C3D1E);">
+          <div class="book-title">Middlemarch</div>
+          <div class="book-author">George Eliot</div>
+        </div>
+      </div>
+      <div class="book-card">
+        <div class="book-cover" style="background: linear-gradient(160deg, #2C4A6B, #1A2E42);">
+          <div class="book-title">Moby-Dick</div>
+          <div class="book-author">Herman Melville</div>
+        </div>
+      </div>
+      <div class="book-card">
+        <div class="book-cover" style="background: linear-gradient(160deg, #4A6741, #2E4228);">
+          <div class="book-title">Walden</div>
+          <div class="book-author">Henry David Thoreau</div>
+        </div>
+      </div>
+      <div class="book-card">
+        <div class="book-cover" style="background: linear-gradient(160deg, #8B3A5C, #5C2038);">
+          <div class="book-title">Jane Eyre</div>
+          <div class="book-author">Charlotte Brontë</div>
+        </div>
+      </div>
+      <div class="book-card">
+        <div class="book-cover" style="background: linear-gradient(160deg, #7A6B2E, #4A4020);">
+          <div class="book-title">Siddhartha</div>
+          <div class="book-author">Hermann Hesse</div>
+        </div>
+      </div>
+      <div class="book-card">
+        <div class="book-cover" style="background: linear-gradient(160deg, #2E6B6B, #1A4242);">
+          <div class="book-title">Moby Dick</div>
+          <div class="book-author">Herman Melville</div>
+        </div>
+      </div>
+      <div class="book-card">
+        <div class="book-cover" style="background: linear-gradient(160deg, #6B3A2E, #422018);">
+          <div class="book-title">Crime & Punishment</div>
+          <div class="book-author">Dostoevsky</div>
+        </div>
+      </div>
+      <div class="book-card">
+        <div class="book-cover" style="background: linear-gradient(160deg, #3A4A6B, #202E42);">
+          <div class="book-title">The Great Gatsby</div>
+          <div class="book-author">F. Scott Fitzgerald</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section class="install" id="install">
+    <div class="section-label">Get Started</div>
+    <h2 class="section-title">On your iPhone in 30 seconds.</h2>
+    <p class="section-sub">No App Store. No account required to browse. Install directly to your home screen as a Progressive Web App.</p>
+
+    <div class="install-steps">
+      <div class="install-step">
+        <div class="step-num">1</div>
+        <div class="step-title">Open in Safari</div>
+        <div class="step-desc">Tap the link below on your iPhone</div>
+      </div>
+      <div class="install-step">
+        <div class="step-num">2</div>
+        <div class="step-title">Tap Share</div>
+        <div class="step-desc">Hit the share icon at the bottom</div>
+      </div>
+      <div class="install-step">
+        <div class="step-num">3</div>
+        <div class="step-title">Add to Home Screen</div>
+        <div class="step-desc">BookWorm lives on your iPhone</div>
+      </div>
+    </div>
+
+    <a href="https://bookworm-dpq.pages.dev" class="install-cta" target="_blank">
+      📱 Open BookWorm
+    </a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="/" class="footer-logo">📖 BookWorm</a>
+    <span class="footer-copy">© 2026 BookWorm. Read deeply.</span>
+    <ul class="footer-links">
+      <li><a href="https://bookworm-dpq.pages.dev" target="_blank">Open App</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#classics">Classics</a></li>
+    </ul>
+  </footer>
+
+</body>
+</html>
